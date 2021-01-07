@@ -10,6 +10,7 @@
     ```
 
 2. Run the scripts for individual datasets
+(should add arguments e.g. all/preprocessing/..)
 ```
 ./scripts/run_excitation.sh
 ./scripts/run_inhibition.sh

@@ -6,11 +6,13 @@ n_seqs=1000
 n_types=10
 n_correlations=16
 dataset=mhp-$(($n_seqs / 1000))K-$n_types
+echo "dataset = $dataset"
 shared_args="--dataset $dataset"
 n_splits=5  # if modified, remember to modify below as well!!!
 
-LOCAL_RUN="xargs -L1 -P${n_splits} python"
-CONDOR_RUN="./condor_wrapper.py python --notify_mode Always"
+PY="python3.7"
+LOCAL_RUN="xargs -L1 -P${n_splits} $PY"
+CONDOR_RUN="./condor_wrapper.py $PY --notify_mode Always"
 CONDOR_RUN_GPU="$CONDOR_RUN --gpu 1 --getenv"
 
 if [ ! -d pkg ]; then
@@ -24,7 +26,7 @@ fi
 # preprocessing/data generation
 
 if [[ $* == *all* ]] || [[ $* == *preprocess* ]]; then
-    python preprocessing/generate_events_by_mhp.py \
+    $PY preprocessing/generate_events_by_mhp.py \
         --n_seqs $n_seqs \
         --n_types $n_types \
         --n_correlations $n_correlations \
@@ -32,7 +34,7 @@ if [[ $* == *all* ]] || [[ $* == *preprocess* ]]; then
         --exp_decay 0.05  \
         --adj_spectral_radius 0.8 \
         --max_jumps 250 \
-        --n_splits $n_splits
+        --n_splits $n_splits \
         --fit
 fi
 
@@ -62,4 +64,6 @@ if [[ $* == *all* ]] || [[ $* == *ERPP* ]]; then
     printf "%s\n" "$WS/tasks/train.py ERPP $shared_args --epoch 200 --cuda --split_id "{0..4} | $LOCAL_RUN
 fi
 
-python postprocessing/summarize_results.py $dataset
+
+$PY postprocessing/summarize_results.py $dataset
+

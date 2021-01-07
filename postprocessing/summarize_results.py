@@ -112,7 +112,7 @@ else:
     res = t[t.dataset == args.dataset].pivot(
         index="model", columns="metric", values=args.agg
     )
-    with pd.ExcelWriter(args.output_path, mode="a") as writer:
+    with pd.ExcelWriter(args.output_path, mode="wa") as writer:
         if args.dataset in writer.book:
             del writer.book[args.dataset]
 
