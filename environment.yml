@@ -15,5 +15,6 @@ dependencies:
   - pip:
     - tick==0.6.0
     - pynvml
+    - openpyxl
   - tqdm
 
