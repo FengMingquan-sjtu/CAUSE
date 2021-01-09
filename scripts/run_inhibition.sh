@@ -17,13 +17,15 @@ elif [ $# == 0 ]; then
     echo "No argument provided."
 fi
 
-CONDOR_RUN="./condor_wrapper.py python --notify_mode Always"
+PY="python3.7"
+LOCAL_RUN="xargs -L1 -P${n_splits} $PY"
+CONDOR_RUN="./condor_wrapper.py $PY --notify_mode Always"
 CONDOR_RUN_GPU="$CONDOR_RUN --gpu 1 --getenv"
 
 # preprocessing/data generation
 
 if [[ $* == *all* ]] || [[ $* == *preprocess* ]]; then
-    python preprocessing/generate_events_by_mscp.py \
+    $PY preprocessing/generate_events_by_mscp.py \
         --n_seqs $n_seqs \
         --n_types $n_types \
         --n_correlations $n_correlations \
@@ -57,4 +59,4 @@ if [[ $* == *all* ]] || [[ $* == *ERPP* ]]; then
     printf "%s\n" "$WS/tasks/train.py ERPP $shared_args --epoch 200 --cuda --split_id "{0..4} | $LOCAL_RUN
 fi
 
-python postprocessing/summarize_results.py $dataset
+$PY postprocessing/summarize_results.py $dataset

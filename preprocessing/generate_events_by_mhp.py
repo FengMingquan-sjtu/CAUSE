@@ -42,7 +42,7 @@ def get_parser():
     )
     parser.add_argument("--name", type=str, default="mhp", help="default: mhp")
     parser.add_argument(
-        "--n_seqs", type=int, default=1000, help="default: 1000"
+        "--n_seqs", type=int, default=1000, help="default: 1000, num of samples"
     )
     parser.add_argument("--n_types", type=int, default=5, help="default: 5")
     parser.add_argument(
@@ -63,7 +63,7 @@ def get_parser():
     parser.add_argument(
         "--max_jumps", type=int, default=1000, help="default: 1000"
     )
-    parser.add_argument("--n_splits", type=int, default=5, help="default: 5")
+    parser.add_argument("--n_splits", type=int, default=5, help="default: 5, for K-fold validation")
     parser.add_argument("--rand_seed", type=int, default=0, help="default: 0")
     parser.add_argument("--fit", action="store_true", help="Default: False")
 
@@ -127,6 +127,7 @@ with Timer("Simulating events"), Pool(cpu_count() // 2) as p:
     )
 
 event_seqs = np.asarray([counting_proc_to_event_seq(cp) for cp in timestamps])
+print("event_seqs =", event_seqs)
 
 with Timer("Computing intensity"), Pool(cpu_count() // 2) as p:
     # NOTE: I/O seems to be a bottleneck

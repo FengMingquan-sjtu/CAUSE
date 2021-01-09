@@ -8,8 +8,9 @@ dataset=pgem-$(($n_seqs / 1000))K-$n_types
 shared_args="--dataset $dataset"
 n_splits=5  # if modified, remember to modify below as well!!!
 
-LOCAL_RUN="xargs -L1 python"
-CONDOR_RUN="./condor_wrapper.py python --notify_mode Always"
+PY="python3.7"
+LOCAL_RUN="xargs -L1 $PY"
+CONDOR_RUN="./condor_wrapper.py $PY --notify_mode Always"
 CONDOR_RUN_GPU="$CONDOR_RUN --gpu 1 --getenv"
 
 if [ ! -d pkg ]; then
@@ -20,7 +21,7 @@ elif [ $# == 0 ]; then
 fi
 
 if [[ $* == *all* ]] || [[ $* == *preprocess* ]]; then
-    python preprocessing/generate_events_by_pgem.py \
+    $PY preprocessing/generate_events_by_pgem.py \
         --n_seqs $n_seqs \
         --n_copies 2 \
         --max_t 500
@@ -46,7 +47,7 @@ if [[ $* == *all* ]] || [[ $* == *ERPP* ]]; then
     printf "%s\n" "$WS/tasks/train.py ERPP $shared_args --max_mean 20 --n_bases 7 --cuda --split_id "{0..4} | $LOCAL_RUN
 fi
 
-# python postprocessing/summarize_results.py $dataset
+$PY postprocessing/summarize_results.py $dataset
 # python postprocessing/compare_hparams.py $dataset HExp decay penalty
 # python postprocessing/compare_hparams.py $dataset NPHC integration_support
 # python postprocessing/compare_hparams.py $dataset HSG max_mean n_gaussians penalty
